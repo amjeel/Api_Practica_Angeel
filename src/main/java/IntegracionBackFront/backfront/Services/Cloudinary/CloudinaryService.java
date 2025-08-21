@@ -2,12 +2,16 @@ package IntegracionBackFront.backfront.Services.Cloudinary;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class CloudinaryService {
@@ -34,6 +38,24 @@ public class CloudinaryService {
         return (String) uploadResult.get("secure_url");
     }
 
+    public String uploadImage(MultipartFile file, String folder) throws  IOException{
+        validateImage(file);
+        String originalFilename = file.getOriginalFilename();
+        String fileExtension = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
+        String uniqueFilename = "img_" + UUID.randomUUID() + fileExtension;
+
+        Map<String, Objects> options = ObjectUtils.asMap(
+                "folder", folder,       //carpeta de destino
+                "public_id", uniqueFilename,    // Nombre unico para el archivo
+                "use_filename", false ,         //no usar el nombre original
+                "unique_filename", false ,      // no genera nombre unico (ya lo hicimos)
+                "overwrite", false,             // no sobreescribir archivos existentes
+                "resource_type", "auto",
+                "quality" , "auto:good"
+        );
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), options);
+        return (String) uploadResult.get("secure_url");
+    }
 
     private void validateImage(MultipartFile file) {
         //1. verificar si el archivo esta vacio
