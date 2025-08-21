@@ -25,10 +25,12 @@ public class CloudinaryConfig {
         Map<String, String> config = new HashMap<>();
 
         config.put("cloud_name", dotenv.get("CLOUDINARY_CLOUD_NAME"));
-        config.put("api_ket", dotenv.get("CLOUDINARY_API_KEY"));
+        config.put("api_key", dotenv.get("CLOUDINARY_API_KEY"));
         config.put("api_secret", dotenv.get("CLOUDINARY_API_SECRET"));
 
         //Retornar una nueva instancia de cloudinary con la configuracion cargada
         return new Cloudinary(config);
     }
 }
+
+
